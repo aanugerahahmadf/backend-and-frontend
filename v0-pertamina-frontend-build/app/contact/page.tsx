@@ -1,0 +1,209 @@
+"use client"
+
+import { useState, useEffect } from "react"
+import { Mail, Phone, MapPin, MessageCircle, Instagram } from "lucide-react"
+import { api } from '@/lib/api'
+
+interface Contact {
+  id: string
+  name: string
+  email?: string
+  phone?: string
+  address?: string
+  whatsapp?: string
+  instagram?: string
+}
+
+interface ContactMethod {
+  id: string
+  type: 'email' | 'phone' | 'address' | 'whatsapp' | 'instagram'
+  title: string
+  value: string
+  icon: typeof Mail | typeof Phone | typeof MapPin | typeof MessageCircle | typeof Instagram
+  color: string
+  borderColor: string
+  hoverColor: string
+  textColor: string
+}
+
+export default function ContactPage() {
+  const [contacts, setContacts] = useState<Contact[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchContacts()
+  }, [])
+
+  const fetchContacts = async () => {
+    try {
+      const data = await api.getContacts()
+      setContacts(data as unknown as Contact[])
+      console.log(data)
+    } catch (error) {
+      console.error('Failed to fetch contacts:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Flatten all contact methods into individual boxes
+  const getAllContactMethods = (): ContactMethod[] => {
+    const methods: ContactMethod[] = [];
+    
+    contacts.forEach(contact => {
+      // Add email box
+      if (contact.email) {
+        methods.push({
+          id: `email-${contact.id}`,
+          type: 'email',
+          title: 'Gmail',
+          value: contact.email,
+          icon: Mail,
+          color: 'bg-blue-600',
+          borderColor: 'border-blue-400',
+          hoverColor: 'hover:bg-blue-700',
+          textColor: 'text-blue-100'
+        });
+      }
+      
+      // Add phone box
+      if (contact.phone) {
+        methods.push({
+          id: `phone-${contact.id}`,
+          type: 'phone',
+          title: 'Phone',
+          value: contact.phone,
+          icon: Phone,
+          color: 'bg-green-600',
+          borderColor: 'border-green-400',
+          hoverColor: 'hover:bg-green-700',
+          textColor: 'text-green-100'
+        });
+      }
+      
+      // Add address box
+      if (contact.address) {
+        methods.push({
+          id: `address-${contact.id}`,
+          type: 'address',
+          title: 'Address',
+          value: contact.address,
+          icon: MapPin,
+          color: 'bg-purple-600',
+          borderColor: 'border-purple-400',
+          hoverColor: 'hover:bg-purple-700',
+          textColor: 'text-purple-100'
+        });
+      }
+      
+      // Add whatsapp box
+      if (contact.whatsapp) {
+        methods.push({
+          id: `whatsapp-${contact.id}`,
+          type: 'whatsapp',
+          title: 'WhatsApp',
+          value: contact.whatsapp,
+          icon: MessageCircle,
+          color: 'bg-emerald-600',
+          borderColor: 'border-emerald-400',
+          hoverColor: 'hover:bg-emerald-700',
+          textColor: 'text-emerald-100'
+        });
+      }
+      
+      // Add instagram box
+      if (contact.instagram) {
+        methods.push({
+          id: `instagram-${contact.id}`,
+          type: 'instagram',
+          title: 'Instagram',
+          value: `@${contact.instagram}`,
+          icon: Instagram,
+          color: 'bg-pink-600',
+          borderColor: 'border-pink-400',
+          hoverColor: 'hover:bg-pink-700',
+          textColor: 'text-pink-100'
+        });
+      }
+    });
+    
+    return methods;
+  };
+
+  const contactMethods = getAllContactMethods();
+
+  return (
+    <main className="bg-gradient-to-br from-blue-950 via-slate-900 to-blue-900 py-8 min-h-[calc(100vh-140px)]">
+      {/* Header */}
+      <div className="pt-4 pb-6 px-4">
+        <h1 className="text-3xl md:text-4xl font-semibold text-white text-center">Contact</h1>
+      </div>
+
+      {/* All Contact Methods - completely separate boxes */}
+      <div className="max-w-7xl mx-auto px-4 pb-8">
+        {loading ? (
+          <div className="text-center py-12">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mb-3"></div>
+            <p className="text-white/50 font-semibold">Loading contacts...</p>
+          </div>
+        ) : contactMethods.length === 0 ? (
+          <div className="text-center py-12">
+            <Mail className="w-12 h-12 text-white/20 mx-auto mb-4" />
+            <p className="text-white/50 font-semibold">No contacts available</p>
+            <p className="text-white/30 text-sm mt-2">Contacts will appear once added in admin panel</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+            {contactMethods.map((method) => {
+              const IconComponent = method.icon;
+              let href = '#';
+              let target = '_self';
+              let rel = '';
+              
+              // Set appropriate links for each type
+              switch(method.type) {
+                case 'email':
+                  href = `mailto:${method.value}`;
+                  break;
+                case 'phone':
+                  href = `tel:${method.value}`;
+                  break;
+                case 'address':
+                  href = `https://maps.google.com/?q=${encodeURIComponent(method.value)}`;
+                  target = '_blank';
+                  rel = 'noopener noreferrer';
+                  break;
+                case 'whatsapp':
+                  href = `https://wa.me/${method.value.replace(/\D/g, "")}`;
+                  target = '_blank';
+                  rel = 'noopener noreferrer';
+                  break;
+                case 'instagram':
+                  href = `https://instagram.com/${method.value.substring(1)}`;
+                  target = '_blank';
+                  rel = 'noopener noreferrer';
+                  break;
+              }
+              
+              return (
+                <a
+                  key={method.id}
+                  href={href}
+                  target={target}
+                  rel={rel}
+                  className={`${method.color} ${method.borderColor} border-2 rounded-lg p-6 hover:${method.hoverColor} transition-colors block`}
+                >
+                  <div className="flex items-center gap-2 mb-2">
+                    <IconComponent className="w-5 h-5 text-white" />
+                    <span className="font-semibold text-white">{method.title}</span>
+                  </div>
+                  <p className={`${method.textColor} text-sm`}>{method.value}</p>
+                </a>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </main>
+  )
+}
