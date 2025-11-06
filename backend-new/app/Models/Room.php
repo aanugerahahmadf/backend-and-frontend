@@ -11,9 +11,6 @@ class Room extends Model
     protected $fillable = [
         'building_id',
         'name',
-        'latitude',
-        'longitude',
-        'marker_icon_url',
     ];
 
     public function building(): BelongsTo
