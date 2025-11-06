@@ -17,8 +17,8 @@ class RoomExporter extends Exporter
         return [
             ExportColumn::make('id')
                 ->label('ID'),
-            ExportColumn::make('name'),
             ExportColumn::make('building.name'),
+            ExportColumn::make('name'),
             ExportColumn::make('latitude'),
             ExportColumn::make('longitude'),
             ExportColumn::make('marker_icon_url'),

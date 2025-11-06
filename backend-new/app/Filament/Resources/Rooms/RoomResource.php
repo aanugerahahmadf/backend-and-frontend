@@ -7,10 +7,13 @@ use BackedEnum;
 use App\Models\Room;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
+use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
 use Filament\Actions\DeleteAction;
+use Filament\Actions\ExportAction;
+use App\Filament\Exports\RoomExporter;
 use Filament\Support\Icons\Heroicon;
 use Filament\Actions\BulkActionGroup;
 use Filament\Forms\Components\Select;
@@ -38,8 +41,6 @@ class RoomResource extends Resource
     {
         return $schema
             ->components([
-                TextInput::make('name')
-                    ->required(),
                 Select::make('building_id')
                     ->relationship('building', 'name')
                     ->searchable()
@@ -48,6 +49,8 @@ class RoomResource extends Resource
                     ->searchPrompt('Search Building...')
                     ->required()
                     ->live(),
+                TextInput::make('name')
+                    ->required(),
                 TextInput::make('latitude'),
                 TextInput::make('longitude'),
                 TextInput::make('marker_icon_url')
@@ -62,9 +65,11 @@ class RoomResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')
-                    ->searchable(),
                 TextColumn::make('building.name')
+                    ->label('Name Building')
+                    ->searchable(),
+                TextColumn::make('name')
+                    ->label('Name Room')
                     ->searchable(),
                 TextColumn::make('latitude')
                     ->searchable()
@@ -74,7 +79,10 @@ class RoomResource extends Resource
                     ->toggleable(),
                 TextColumn::make('marker_icon_url')
                     ->searchable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->formatStateUsing(fn ($state): string => $state ?? 'Using default icon')
+                    ->url(fn ($record) => $record->marker_icon_url)
+                    ->openUrlInNewTab(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -86,6 +94,13 @@ class RoomResource extends Resource
             ])
             ->filters([
                 //
+            ])
+            ->headerActions([
+                CreateAction::make()
+                    ->label('Create Room'),
+                ExportAction::make()
+                    ->exporter(RoomExporter::class)
+                    ->label('Export Room'),
             ])
             ->recordActions([
                 ViewAction::make()

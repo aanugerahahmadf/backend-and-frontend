@@ -15,11 +15,11 @@ class ManageContacts extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make()
-                ->label('Create Contact'),
-            ExportAction::make()
-                ->exporter(ContactExporter::class)
-                ->label('Export Contact'),
+            //CreateAction::make()
+                //->label('Create Contact'),
+            //ExportAction::make()
+                //->exporter(ContactExporter::class)
+                //->label('Export Contact'),
         ];
     }
 }

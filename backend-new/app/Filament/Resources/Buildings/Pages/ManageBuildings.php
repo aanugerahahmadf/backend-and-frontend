@@ -15,11 +15,11 @@ class ManageBuildings extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make()
-                ->label('Create Building'),
-            ExportAction::make()
-                ->exporter(BuildingExporter::class)
-                ->label('Export Building'),
+            //CreateAction::make()
+                //->label('Create Building'),
+            //ExportAction::make()
+                //->exporter(BuildingExporter::class)
+                //->label('Export Building'),
         ];
     }
 }

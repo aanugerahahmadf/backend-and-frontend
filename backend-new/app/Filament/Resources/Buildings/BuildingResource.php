@@ -7,10 +7,13 @@ use App\Models\Building;
 use BackedEnum;
 use Filament\Forms\Components\TextInput;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Actions\ExportAction;
+use App\Filament\Exports\BuildingExporter;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -62,7 +65,10 @@ class BuildingResource extends Resource
                     ->toggleable(),
                 TextColumn::make('marker_icon_url')
                     ->searchable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->formatStateUsing(fn ($state): string => $state ?? 'Using default icon')
+                    ->url(fn ($record) => $record->marker_icon_url)
+                    ->openUrlInNewTab(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -74,6 +80,14 @@ class BuildingResource extends Resource
             ])
             ->filters([
                 //
+            ])
+            ->headerActions([
+                CreateAction::make()
+                    ->label('Create Building'),
+                ExportAction::make()
+                    ->exporter(BuildingExporter::class)
+                    ->label('Export Building'),
+
             ])
             ->recordActions([
                 ViewAction::make()

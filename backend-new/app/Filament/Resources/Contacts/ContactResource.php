@@ -7,9 +7,12 @@ use BackedEnum;
 use App\Models\Contact;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
+use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
+use Filament\Actions\ExportAction;
+use App\Filament\Exports\ContactExporter;
 use Filament\Actions\DeleteAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Actions\BulkActionGroup;
@@ -65,6 +68,13 @@ class ContactResource extends Resource
             ])
             ->filters([
                 //
+            ])
+            ->headerActions([
+                CreateAction::make()
+                    ->label('Create Contact'),
+                ExportAction::make()
+                    ->exporter(ContactExporter::class)
+                    ->label('Export Contact'),
             ])
             ->recordActions([
                 ViewAction::make()

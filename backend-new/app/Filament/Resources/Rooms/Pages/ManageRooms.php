@@ -15,11 +15,11 @@ class ManageRooms extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make()
-                ->label('Create Room'),
-            ExportAction::make()
-                ->exporter(RoomExporter::class)
-                ->label('Export Room'),
+            //CreateAction::make()
+                //->label('Create Room'),
+            //ExportAction::make()
+                //->exporter(RoomExporter::class)
+                //->label('Export Room'),
         ];
     }
 }

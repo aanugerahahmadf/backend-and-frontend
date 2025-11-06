@@ -9,8 +9,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Room extends Model
 {
     protected $fillable = [
-        'name',
         'building_id',
+        'name',
         'latitude',
         'longitude',
         'marker_icon_url',

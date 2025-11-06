@@ -11,6 +11,8 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
 use Filament\Actions\DeleteAction;
+use Filament\Actions\ExportAction;
+use App\Filament\Exports\CctvExporter;
 use Filament\Support\Icons\Heroicon;
 use Filament\Actions\BulkActionGroup;
 use Filament\Forms\Components\Select;
@@ -18,6 +20,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Resources\Cctvs\Pages\ManageCctvs;
+use Filament\Actions\CreateAction;
 
 class CctvResource extends Resource
 {
@@ -59,6 +62,7 @@ class CctvResource extends Resource
                     ->default('admin'),
                 TextInput::make('password')
                     ->password()
+                    ->revealable()
                     ->default('password.123'),
                 TextInput::make('ip_address')
                     ->required()
@@ -74,11 +78,11 @@ class CctvResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')
-                    ->searchable(),
                 TextColumn::make('building.name')
                     ->searchable(),
                 TextColumn::make('room.name')
+                    ->searchable(),
+                TextColumn::make('name')
                     ->searchable(),
                 TextColumn::make('ip_address')
                     ->searchable(),
@@ -97,6 +101,13 @@ class CctvResource extends Resource
             ])
             ->filters([
                 //
+            ])
+            ->headerActions([
+                CreateAction::make()
+                    ->label('Create Cctv'),
+                ExportAction::make()
+                    ->exporter(CctvExporter::class)
+                    ->label('Export Cctv'),
             ])
             ->recordActions([
                 ViewAction::make()

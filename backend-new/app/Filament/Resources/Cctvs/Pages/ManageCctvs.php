@@ -15,11 +15,11 @@ class ManageCctvs extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make()
-                ->label('Create Cctv'),
-            ExportAction::make()
-                ->exporter(CctvExporter::class)
-                ->label('Export Cctv'),
+            //CreateAction::make()
+                //->label('Create Cctv'),
+            //ExportAction::make()
+                //->exporter(CctvExporter::class)
+                //->label('Export Cctv'),
         ];
     }
 }
