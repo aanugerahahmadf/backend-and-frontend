@@ -30,9 +30,9 @@ class RoomResource extends Resource
 
     protected static ?string $navigationLabel = 'Room';
 
-    protected static ?string $modelLabel = 'Room';
+    protected static ?string $modelLabel = 'Room Management';
 
-    protected static ?string $pluralModelLabel = 'Room';
+    protected static ?string $pluralModelLabel = 'Room Management';
 
     protected static ?int $navigationSort = 2;
 
@@ -51,13 +51,12 @@ class RoomResource extends Resource
                     ->live(),
                 TextInput::make('name')
                     ->required(),
-                TextInput::make('latitude'),
-                TextInput::make('longitude'),
-                TextInput::make('marker_icon_url')
-                    ->label('Marker Icon')
-                    ->placeholder('https://blade-ui-kit.com/blade-icons/tabler-device-cctv-f')
-                    ->default('https://blade-ui-kit.com/blade-icons/tabler-device-cctv-f')
-                    ->helperText('Enter a custom marker icon URL or leave blank to use the default green CCTV icon.'),
+                //TextInput::make('latitude'),
+                //TextInput::make('longitude'),
+                // TextInput::make('marker_icon_url')
+                //     ->label('Marker Icon')
+                //     ->placeholder('https://blade-ui-kit.com/blade-icons/tabler-device-cctv-f')
+                //     ->default('https://blade-ui-kit.com/blade-icons/tabler-device-cctv-f'),
             ]);
     }
 
@@ -71,18 +70,18 @@ class RoomResource extends Resource
                 TextColumn::make('name')
                     ->label('Name Room')
                     ->searchable(),
-                TextColumn::make('latitude')
-                    ->searchable()
-                    ->toggleable(),
-                TextColumn::make('longitude')
-                    ->searchable()
-                    ->toggleable(),
-                TextColumn::make('marker_icon_url')
-                    ->searchable()
-                    ->toggleable()
-                    ->formatStateUsing(fn ($state): string => $state ?? 'Using default icon')
-                    ->url(fn ($record) => $record->marker_icon_url)
-                    ->openUrlInNewTab(),
+                // TextColumn::make('latitude')
+                //     ->searchable()
+                //     ->toggleable(),
+                // TextColumn::make('longitude')
+                //     ->searchable()
+                //     ->toggleable(),
+                // TextColumn::make('marker_icon_url')
+                //     ->searchable()
+                //     ->toggleable()
+                //     ->formatStateUsing(fn ($state): string => $state ?? 'Using default icon')
+                //     ->url(fn ($record) => $record->marker_icon_url)
+                //     ->openUrlInNewTab(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

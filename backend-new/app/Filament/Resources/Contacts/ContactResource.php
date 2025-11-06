@@ -26,13 +26,13 @@ class ContactResource extends Resource
 {
     protected static ?string $model = Contact::class;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Contact';
+    protected static string|UnitEnum|null $navigationGroup = 'Contact Us';
 
     protected static ?string $navigationLabel = 'Contact';
 
-    protected static ?string $modelLabel = 'Contact';
+    protected static ?string $modelLabel = 'Contact Us';
 
-    protected static ?string $pluralModelLabel = 'Contact';
+    protected static ?string $pluralModelLabel = 'Contact Us';
 
     protected static ?int $navigationSort = 1;
 

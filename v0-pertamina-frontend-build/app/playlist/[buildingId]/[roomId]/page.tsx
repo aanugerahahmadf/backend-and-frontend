@@ -88,13 +88,14 @@ export default function PlaylistCctvPage() {
     <main className="bg-gradient-to-br from-blue-950 via-slate-900 to-blue-900 py-8 min-h-[calc(100vh-140px)]">
       {/* Header - responsive design */}
       <div className="pt-4 pb-6 px-4">
-        <div className="max-w-7xl mx-auto flex items-center gap-3 md:gap-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
           <Link href={`/playlist/${buildingId}`} className="text-blue-300 hover:text-white transition p-2">
             <ArrowLeft size={20} className="md:w-6 md:h-6" />
           </Link>
-          <h1 className="text-2xl md:text-3xl font-semibold text-white truncate">
+          <h1 className="text-2xl md:text-3xl font-semibold text-white truncate text-center flex-grow mx-4">
             {room ? room.name : 'Playlist'}
           </h1>
+          <div className="w-8 md:w-6"></div> {/* Spacer to balance the layout */}
         </div>
       </div>
 
@@ -153,17 +154,6 @@ export default function PlaylistCctvPage() {
                   >
                     <Play size={16} />
                     <span className="text-sm">LIVE STREAM</span>
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      // In a real implementation, you might open a new tab with direct access
-                      alert(`Direct access to ${cctv.name} would open here`)
-                    }}
-                    className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-2 px-3 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
-                    aria-label="Direct access"
-                  >
-                    <ExternalLink size={16} />
                   </button>
                 </div>
               </div>

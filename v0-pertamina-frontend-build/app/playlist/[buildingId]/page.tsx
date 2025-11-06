@@ -42,21 +42,40 @@ export default function PlaylistRoomPage() {
     }
   }, [buildingId])
 
-  const filteredRooms = rooms.filter((r) => 
-    r.name && r.name.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  const filteredRooms = rooms
+    .filter((r: any) => r.name && r.name.toLowerCase().includes(searchTerm.toLowerCase()))
+    .reduce((acc: any[], room: any) => {
+      const existingRoom = acc.find((r: any) => r.name === room.name);
+      if (existingRoom) {
+        // If room already exists, merge CCTVs
+        if (room.cctvs && Array.isArray(room.cctvs)) {
+          existingRoom.cctvs = existingRoom.cctvs || [];
+          existingRoom.cctvs = [...existingRoom.cctvs, ...room.cctvs];
+        }
+        // Update CCTV count
+        existingRoom.cctvCount = (existingRoom.cctvs && existingRoom.cctvs.length) || 0;
+      } else {
+        // If new room, add it with CCTV count
+        acc.push({
+          ...room,
+          cctvCount: (room.cctvs && room.cctvs.length) || 0
+        });
+      }
+      return acc;
+    }, [])
 
   return (
     <main className="bg-gradient-to-br from-blue-950 via-slate-900 to-blue-900 py-8 min-h-[calc(100vh-140px)]">
       {/* Header - responsive design */}
       <div className="pt-4 pb-6 px-4">
-        <div className="max-w-7xl mx-auto flex items-center gap-3 md:gap-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
           <Link href="/playlist" className="text-blue-300 hover:text-white transition p-2">
             <ArrowLeft size={20} className="md:w-6 md:h-6" />
           </Link>
-          <h1 className="text-2xl md:text-3xl font-semibold text-white truncate">
+          <h1 className="text-2xl md:text-3xl font-semibold text-white truncate text-center flex-grow mx-4">
             {building ? building.name : 'Playlist'}
           </h1>
+          <div className="w-8 md:w-6"></div> {/* Spacer to balance the layout */}
         </div>
       </div>
 
@@ -109,16 +128,6 @@ export default function PlaylistRoomPage() {
                         <Video className="w-4 h-4 text-red-400" />
                         <span className="text-white text-sm truncate">{cctv.name || 'Unnamed CCTV'}</span>
                       </div>
-                      <button 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          // In a real implementation, you would open a modal or navigate to live stream
-                          alert(`Live stream for ${cctv.name || 'Unnamed CCTV'} would open here`)
-                        }}
-                        className="text-xs bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded transition"
-                      >
-                        Live
-                      </button>
                     </div>
                   ))}
                   {room.cctvs && Array.isArray(room.cctvs) && room.cctvs.length > 3 && (

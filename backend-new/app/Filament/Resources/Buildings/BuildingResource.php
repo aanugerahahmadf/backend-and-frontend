@@ -29,9 +29,9 @@ class BuildingResource extends Resource
 
     protected static ?string $navigationLabel = 'Building';
 
-    protected static ?string $modelLabel = 'Building';
+    protected static ?string $modelLabel = 'Building Management';
 
-    protected static ?string $pluralModelLabel = 'Building';
+    protected static ?string $pluralModelLabel = 'Building Management';
 
     protected static ?int $navigationSort = 1;
 
@@ -46,8 +46,7 @@ class BuildingResource extends Resource
                 TextInput::make('marker_icon_url')
                     ->label('Marker Icon URL')
                     ->placeholder('https://blade-ui-kit.com/blade-icons/govicon-building')
-                    ->default('https://blade-ui-kit.com/blade-icons/govicon-building')
-                    ->helperText('Enter a custom marker icon URL or leave blank to use the default blue building icon.'),
+                    ->default('https://blade-ui-kit.com/blade-icons/govicon-building'),
             ]);
     }
 

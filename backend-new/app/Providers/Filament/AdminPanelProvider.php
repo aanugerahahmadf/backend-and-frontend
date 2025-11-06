@@ -51,7 +51,7 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('bxs-map-pin')
                     ->collapsed(),
                 NavigationGroup::make()
-                    ->label('Contact')
+                    ->label('Contact Us')
                     ->icon('bxs-message-detail')
                     ->collapsed(),
              ])

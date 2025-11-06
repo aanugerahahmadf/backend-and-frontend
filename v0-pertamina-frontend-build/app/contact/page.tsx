@@ -132,7 +132,7 @@ export default function ContactPage() {
     <main className="bg-gradient-to-br from-blue-950 via-slate-900 to-blue-900 py-8 min-h-[calc(100vh-140px)]">
       {/* Header */}
       <div className="pt-4 pb-6 px-4">
-        <h1 className="text-3xl md:text-4xl font-semibold text-white text-center">Contact</h1>
+        <h1 className="text-3xl md:text-4xl font-semibold text-white text-center">Contact Us</h1>
       </div>
 
       {/* All Contact Methods - completely separate boxes */}

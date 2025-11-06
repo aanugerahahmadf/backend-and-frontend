@@ -30,9 +30,9 @@ class CctvResource extends Resource
 
     protected static ?string $navigationLabel = 'Cctv';
 
-    protected static ?string $modelLabel = 'Cctv';
+    protected static ?string $modelLabel = 'Cctv Management';
 
-    protected static ?string $pluralModelLabel = 'Cctv';
+    protected static ?string $pluralModelLabel = 'Cctv Management';
 
     protected static ?int $navigationSort = 3;
 
