@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Rooms;
 use UnitEnum;
 use BackedEnum;
 use App\Models\Room;
+use App\Models\Building;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use Filament\Actions\CreateAction;
@@ -42,7 +43,8 @@ class RoomResource extends Resource
         return $schema
             ->components([
                 Select::make('building_id')
-                    ->relationship('building', 'name')
+                    ->label('Building')
+                    ->options(Building::pluck('name', 'id')->unique())
                     ->searchable()
                     ->preload()
                     ->native(false)
@@ -51,12 +53,6 @@ class RoomResource extends Resource
                     ->live(),
                 TextInput::make('name')
                     ->required(),
-                //TextInput::make('latitude'),
-                //TextInput::make('longitude'),
-                // TextInput::make('marker_icon_url')
-                //     ->label('Marker Icon')
-                //     ->placeholder('https://blade-ui-kit.com/blade-icons/tabler-device-cctv-f')
-                //     ->default('https://blade-ui-kit.com/blade-icons/tabler-device-cctv-f'),
             ]);
     }
 
@@ -70,18 +66,6 @@ class RoomResource extends Resource
                 TextColumn::make('name')
                     ->label('Name Room')
                     ->searchable(),
-                // TextColumn::make('latitude')
-                //     ->searchable()
-                //     ->toggleable(),
-                // TextColumn::make('longitude')
-                //     ->searchable()
-                //     ->toggleable(),
-                // TextColumn::make('marker_icon_url')
-                //     ->searchable()
-                //     ->toggleable()
-                //     ->formatStateUsing(fn ($state): string => $state ?? 'Using default icon')
-                //     ->url(fn ($record) => $record->marker_icon_url)
-                //     ->openUrlInNewTab(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
