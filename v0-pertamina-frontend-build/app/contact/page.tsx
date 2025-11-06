@@ -1,25 +1,23 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Mail, Phone, MapPin, MessageCircle, Instagram } from "lucide-react"
+import { Mail, Phone, MapPin, Instagram } from "lucide-react"
 import { api } from '@/lib/api'
 
 interface Contact {
   id: string
-  name: string
   email?: string
   phone?: string
   address?: string
-  whatsapp?: string
   instagram?: string
 }
 
 interface ContactMethod {
   id: string
-  type: 'email' | 'phone' | 'address' | 'whatsapp' | 'instagram'
+  type: 'email' | 'phone' | 'address' | 'instagram'
   title: string
   value: string
-  icon: typeof Mail | typeof Phone | typeof MapPin | typeof MessageCircle | typeof Instagram
+  icon: typeof Mail | typeof Phone | typeof MapPin | typeof Instagram
   color: string
   borderColor: string
   hoverColor: string
@@ -37,10 +35,21 @@ export default function ContactPage() {
   const fetchContacts = async () => {
     try {
       const data = await api.getContacts()
-      setContacts(data as unknown as Contact[])
+      // Handle case where data might be null, a single contact, or an array of contacts
+      if (Array.isArray(data)) {
+        setContacts(data)
+      } else if (data && typeof data === 'object' && 'id' in data) {
+        // If it's a single contact object, wrap it in an array
+        setContacts([data as Contact])
+      } else {
+        // If no data or null, set empty array
+        setContacts([])
+      }
       console.log(data)
     } catch (error) {
       console.error('Failed to fetch contacts:', error)
+      // Set empty array on error
+      setContacts([])
     } finally {
       setLoading(false)
     }
@@ -96,20 +105,7 @@ export default function ContactPage() {
         });
       }
       
-      // Add whatsapp box
-      if (contact.whatsapp) {
-        methods.push({
-          id: `whatsapp-${contact.id}`,
-          type: 'whatsapp',
-          title: 'WhatsApp',
-          value: contact.whatsapp,
-          icon: MessageCircle,
-          color: 'bg-emerald-600',
-          borderColor: 'border-emerald-400',
-          hoverColor: 'hover:bg-emerald-700',
-          textColor: 'text-emerald-100'
-        });
-      }
+
       
       // Add instagram box
       if (contact.instagram) {
@@ -173,11 +169,7 @@ export default function ContactPage() {
                   target = '_blank';
                   rel = 'noopener noreferrer';
                   break;
-                case 'whatsapp':
-                  href = `https://wa.me/${method.value.replace(/\D/g, "")}`;
-                  target = '_blank';
-                  rel = 'noopener noreferrer';
-                  break;
+
                 case 'instagram':
                   href = `https://instagram.com/${method.value.substring(1)}`;
                   target = '_blank';
@@ -205,5 +197,5 @@ export default function ContactPage() {
         )}
       </div>
     </main>
-  )
+  );
 }

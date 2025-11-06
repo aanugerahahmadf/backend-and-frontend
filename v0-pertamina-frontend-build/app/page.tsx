@@ -34,8 +34,18 @@ export default function Home() {
     const fetchChartData = async () => {
       try {
         setChartLoading(true);
-        // In a real implementation, you would fetch actual chart data from the API
-        // For now, we'll generate mock data
+        
+        // Fetch real chart data from the backend
+        const [productionData, unitData] = await Promise.all([
+          api.getProductionTrends(),
+          api.getUnitPerformance()
+        ]);
+        
+        setProductionTrends(productionData);
+        setUnitPerformance(unitData);
+      } catch (error) {
+        console.error('Failed to fetch chart data:', error);
+        // Fallback to mock data if API fails
         const mockProductionTrends = [
           { date: 'Jan', production: 4000, target: 4200 },
           { date: 'Feb', production: 3000, target: 3800 },
@@ -56,8 +66,6 @@ export default function Home() {
         
         setProductionTrends(mockProductionTrends);
         setUnitPerformance(mockUnitPerformance);
-      } catch (error) {
-        console.error('Failed to fetch chart data:', error);
       } finally {
         setChartLoading(false);
       }
@@ -70,16 +78,9 @@ export default function Home() {
   return (
     <main className="bg-gradient-to-br from-blue-950 via-slate-900 to-blue-900 py-12 min-h-[calc(100vh-180px)]">
       {/* Header */}
-      <div className="pt-4 pb-8 px-4">
-        <div className="flex justify-between items-center">
+      <div className="w-full pt-4 pb-8 px-4">
+        <div className="flex justify-center items-center">
           <h1 className="text-4xl font-semibold text-white">Dashboard</h1>
-          <div className="flex items-center">
-            <div className={`w-3 h-3 rounded-full mr-2 ${apiStatus === 'connected' ? 'bg-green-500' : apiStatus === 'error' ? 'bg-red-500' : 'bg-yellow-500'}`}></div>
-            <span className="text-white text-sm">
-              {apiStatus === 'checking' ? 'Checking API...' : 
-               apiStatus === 'connected' ? 'API Connected' : 'API Error'}
-            </span>
-          </div>
         </div>
       </div>
 

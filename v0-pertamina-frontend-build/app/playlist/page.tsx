@@ -17,9 +17,15 @@ export default function PlaylistPage() {
     const fetchBuildings = async () => {
       try {
         const data = await api.getBuildings()
-        setBuildings(data)
+        // Ensure data is an array
+        if (Array.isArray(data)) {
+          setBuildings(data)
+        } else {
+          setBuildings([])
+        }
       } catch (error) {
         console.error('Failed to fetch buildings:', error)
+        setBuildings([])
       } finally {
         setLoading(false)
       }
@@ -42,7 +48,7 @@ export default function PlaylistPage() {
   }
 
   const filteredBuildings = buildings.filter((b) => 
-    b.name.toLowerCase().includes(searchTerm.toLowerCase())
+    b.name && b.name.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
   return (
@@ -59,7 +65,7 @@ export default function PlaylistPage() {
           <input
             key="search-input"
             type="text"
-            placeholder="Search buildings..."
+            placeholder="Search building..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-10 pr-4 py-2 md:py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl text-white placeholder-white/50 font-semibold focus:outline-none focus:border-white/40 transition"
@@ -73,13 +79,13 @@ export default function PlaylistPage() {
         {loading ? (
           <div className="text-center py-12">
             <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mb-3"></div>
-            <p className="text-white/50 font-semibold">Loading buildings...</p>
+            <p className="text-white/50 font-semibold">Loading building...</p>
           </div>
         ) : filteredBuildings.length === 0 ? (
           <div className="text-center py-12">
             <Building2 className="w-12 h-12 text-white/20 mx-auto mb-4" />
-            <p className="text-white/50 font-semibold">No buildings available</p>
-            <p className="text-white/30 text-sm mt-2">Buildings will appear once added in admin panel</p>
+            <p className="text-white/50 font-semibold">No building available</p>
+            <p className="text-white/30 text-sm mt-2">Building will appear once added in admin panel</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
@@ -88,18 +94,18 @@ export default function PlaylistPage() {
                 <div className="flex items-center gap-3 mb-4">
                   <Building2 className="w-5 h-5 md:w-6 md:h-6 text-blue-400" />
                   <h3 className="text-lg md:text-xl font-semibold text-white truncate">
-                    {building.name}
+                    {building.name || 'Unnamed Building'}
                   </h3>
                 </div>
                 
                 {/* Rooms Section - responsive design */}
                 <div className="space-y-3">
-                  {building.rooms?.slice(0, 2).map((room: any) => (
+                  {building.rooms && Array.isArray(building.rooms) && building.rooms.slice(0, 2).map((room: any) => (
                     <div key={room.id} className="bg-white/5 rounded-lg p-3">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <DoorOpen className="w-4 h-4 text-green-400" />
-                          <span className="text-white text-sm font-medium truncate">{room.name}</span>
+                          <span className="text-white text-sm font-medium truncate">{room.name || 'Unnamed Room'}</span>
                         </div>
                         <Link href={`/playlist/${building.id}/${room.id}`}>
                           <button className="text-xs bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded transition">
@@ -110,11 +116,11 @@ export default function PlaylistPage() {
                       
                       {/* CCTVs Section - responsive design */}
                       <div className="mt-2 space-y-1">
-                        {room.cctvs?.slice(0, 2).map((cctv: any) => (
+                        {room.cctvs && Array.isArray(room.cctvs) && room.cctvs.slice(0, 2).map((cctv: any) => (
                           <div key={cctv.id} className="flex items-center justify-between bg-black/20 rounded p-2">
                             <div className="flex items-center gap-2">
                               <Video className="w-3 h-3 text-red-400" />
-                              <span className="text-white/80 text-xs truncate">{cctv.name}</span>
+                              <span className="text-white/80 text-xs truncate">{cctv.name || 'Unnamed CCTV'}</span>
                             </div>
                             <button 
                               onClick={(e) => {
@@ -128,37 +134,37 @@ export default function PlaylistPage() {
                             </button>
                           </div>
                         ))}
-                        {room.cctvs?.length > 2 && (
+                        {room.cctvs && Array.isArray(room.cctvs) && room.cctvs.length > 2 && (
                           <div className="text-xs text-white/50 text-center">
-                            +{room.cctvs.length - 2} more CCTVs
+                            +{room.cctvs.length - 2} more CCTV
                           </div>
                         )}
                       </div>
                     </div>
                   ))}
-                  {building.rooms?.length > 2 && (
+                  {building.rooms && Array.isArray(building.rooms) && building.rooms.length > 2 && (
                     <div className="text-center">
                       <Link href={`/playlist/${building.id}`}>
                         <button className="text-xs md:text-sm bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg transition">
-                          View All {building.rooms.length} Rooms
+                          View All {building.rooms.length} Room
                         </button>
                       </Link>
                     </div>
                   )}
-                  {building.rooms?.length === 0 && (
+                  {(!building.rooms || !Array.isArray(building.rooms) || building.rooms.length === 0) && (
                     <div className="text-center py-2">
-                      <p className="text-white/50 text-sm">No rooms available</p>
+                      <p className="text-white/50 text-sm">No room available</p>
                     </div>
                   )}
                 </div>
                 
                 <div className="flex items-center justify-between mt-4 pt-3 border-t border-white/10">
                   <span className="text-sm text-white/70">
-                    {building.rooms?.length || 0} Rooms
+                    {building.rooms && Array.isArray(building.rooms) ? building.rooms.length : 0} Room
                   </span>
                   <Link href={`/playlist/${building.id}`}>
                     <button className="text-xs md:text-sm bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg transition">
-                      View Rooms
+                      View Room
                     </button>
                   </Link>
                 </div>
@@ -176,7 +182,7 @@ export default function PlaylistPage() {
             <div className="flex items-center justify-between p-3 sm:p-4 md:p-6 border-b border-white/10">
               <h2 className="text-base sm:text-lg md:text-xl font-semibold text-white flex items-center gap-2">
                 <Video className="w-4 h-4 sm:w-5 sm:h-5 text-red-400 flex-shrink-0" />
-                <span className="truncate max-w-[120px] sm:max-w-[200px] md:max-w-xs">{selectedCctv.name}</span>
+                <span className="truncate max-w-[120px] sm:max-w-[200px] md:max-w-xs">{selectedCctv.name || 'Unnamed CCTV'}</span>
               </h2>
               <button 
                 onClick={() => {
@@ -200,10 +206,10 @@ export default function PlaylistPage() {
                     <div className="text-center p-2 sm:p-4 max-w-full">
                       <Video className="w-8 h-8 sm:w-12 sm:h-12 text-white/30 mx-auto mb-2 sm:mb-3" />
                       <p className="text-white/50 font-semibold text-sm sm:text-base">Live Stream Player</p>
-                      <p className="text-white/30 text-xs sm:text-sm mt-1 sm:mt-2 break-all px-2">Stream URL: {streamData.hls_url || streamData.rtsp_url}</p>
+                      <p className="text-white/30 text-xs sm:text-sm mt-1 sm:mt-2 break-all px-2">Stream URL: {streamData.hls_url || streamData.rtsp_url || streamData.stream_url || 'Not available'}</p>
                       <div className="mt-2 sm:mt-4 text-xs text-white/40 space-y-1">
-                        <p>IP: {selectedCctv.ip_address}</p>
-                        <p>Username: {selectedCctv.username}</p>
+                        <p>IP: {selectedCctv.ip_address || selectedCctv.ip_rtsp_url || 'Not configured'}</p>
+                        <p>Username: {selectedCctv.username || 'Not configured'}</p>
                         <p className="mt-1 sm:mt-2 text-yellow-400/80">To enable live streaming:</p>
                         <p className="text-xs">1. Install FFmpeg on the server</p>
                         <p className="text-xs">2. Configure HLS streaming</p>

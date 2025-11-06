@@ -25,16 +25,16 @@ export default function Navbar() {
 
         {/* Desktop Menu */}
         <div className="hidden md:flex gap-8">
-          <Link href="/" className="text-white/70 hover:text-white font-semibold transition">
+          <Link href="/" className="text-white font-semibold transition hover:text-white">
             Home
           </Link>
-          <Link href="/maps" className="text-white/70 hover:text-white font-semibold transition">
+          <Link href="/maps" className="text-white font-semibold transition hover:text-white">
             Maps
           </Link>
-          <Link href="/playlist" className="text-white/70 hover:text-white font-semibold transition">
+          <Link href="/playlist" className="text-white font-semibold transition hover:text-white">
             Playlist
           </Link>
-          <Link href="/contact" className="text-white/70 hover:text-white font-semibold transition">
+          <Link href="/contact" className="text-white font-semibold transition hover:text-white">
             Contact
           </Link>
         </div>
@@ -55,28 +55,28 @@ export default function Navbar() {
           <div className="flex flex-col gap-3">
             <Link 
               href="/" 
-              className="text-white/70 hover:text-white font-semibold transition block py-3 px-4 rounded-lg hover:bg-white/10"
+              className="text-white font-semibold transition block py-3 px-4 rounded-lg hover:bg-white/10"
               onClick={() => setMobileMenuOpen(false)}
             >
               Home
             </Link>
             <Link 
               href="/maps" 
-              className="text-white/70 hover:text-white font-semibold transition block py-3 px-4 rounded-lg hover:bg-white/10"
+              className="text-white font-semibold transition block py-3 px-4 rounded-lg hover:bg-white/10"
               onClick={() => setMobileMenuOpen(false)}
             >
               Maps
             </Link>
             <Link 
               href="/playlist" 
-              className="text-white/70 hover:text-white font-semibold transition block py-3 px-4 rounded-lg hover:bg-white/10"
+              className="text-white font-semibold transition block py-3 px-4 rounded-lg hover:bg-white/10"
               onClick={() => setMobileMenuOpen(false)}
             >
               Playlist
             </Link>
             <Link 
               href="/contact" 
-              className="text-white/70 hover:text-white font-semibold transition block py-3 px-4 rounded-lg hover:bg-white/10"
+              className="text-white font-semibold transition block py-3 px-4 rounded-lg hover:bg-white/10"
               onClick={() => setMobileMenuOpen(false)}
             >
               Contact

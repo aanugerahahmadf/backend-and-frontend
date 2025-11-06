@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Search, Video, ArrowLeft, Play, ExternalLink } from "lucide-react"
 import Link from "next/link"
 import { useParams } from "next/navigation"
@@ -16,6 +16,7 @@ export default function PlaylistCctvPage() {
   const [selectedCctv, setSelectedCctv] = useState<any>(null)
   const [showLiveStream, setShowLiveStream] = useState(false)
   const [loading, setLoading] = useState(true)
+  const videoPlayerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const fetchRoomAndCctvs = async () => {
@@ -55,6 +56,22 @@ export default function PlaylistCctvPage() {
       console.error('Failed to fetch stream URL:', error)
     }
   }
+
+  const handleFullscreen = () => {
+    if (!videoPlayerRef.current) return;
+    
+    const element = videoPlayerRef.current;
+    
+    if (element.requestFullscreen) {
+      element.requestFullscreen();
+    } else if ((element as any).mozRequestFullScreen) { /* Firefox */
+      (element as any).mozRequestFullScreen();
+    } else if ((element as any).webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+      (element as any).webkitRequestFullscreen();
+    } else if ((element as any).msRequestFullscreen) { /* IE/Edge */
+      (element as any).msRequestFullscreen();
+    }
+  };
 
   // Close modal on Escape key press
   useEffect(() => {
@@ -106,7 +123,6 @@ export default function PlaylistCctvPage() {
           <div className="text-center py-12">
             <Video className="w-12 h-12 text-white/20 mx-auto mb-4" />
             <p className="text-white/50 font-semibold">No CCTV cameras available</p>
-            <p className="text-white/30 text-sm mt-2">CCTV cameras will appear once added in admin panel</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
@@ -123,11 +139,9 @@ export default function PlaylistCctvPage() {
                 {/* CCTV Details - responsive design */}
                 <div className="space-y-2 mb-4 text-sm">
                   <div className="flex items-center gap-2">
-                    <span className="text-white/70">IP:</span>
-                    <span className="text-white font-mono text-xs md:text-sm truncate">{cctv.ip_address}</span>
+                    <span className="text-white/70 font-mono text-xs md:text-sm truncate">{cctv.ip_address}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-white/70">Username:</span>
                     <span className="text-white font-mono text-xs md:text-sm truncate">{cctv.username}</span>
                   </div>
                 </div>
@@ -135,10 +149,10 @@ export default function PlaylistCctvPage() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => handleLiveStream(cctv)}
-                    className="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-3 md:px-4 rounded-lg transition-all duration-300 flex items-center justify-center gap-2"
+                    className="flex-1 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
                   >
-                    <Play size={16} className="md:w-18 md:h-18" />
-                    <span className="text-sm md:text-base">LIVE STREAM</span>
+                    <Play size={16} />
+                    <span className="text-sm">LIVE STREAM</span>
                   </button>
                   <button
                     onClick={(e) => {
@@ -146,10 +160,10 @@ export default function PlaylistCctvPage() {
                       // In a real implementation, you might open a new tab with direct access
                       alert(`Direct access to ${cctv.name} would open here`)
                     }}
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-3 rounded-lg transition-all duration-300"
+                    className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-2 px-3 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
                     aria-label="Direct access"
                   >
-                    <ExternalLink size={16} className="md:w-18 md:h-18" />
+                    <ExternalLink size={16} />
                   </button>
                 </div>
               </div>
@@ -161,7 +175,7 @@ export default function PlaylistCctvPage() {
       {/* Live Stream Modal - responsive design */}
       {showLiveStream && selectedCctv && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-blue-950 border border-white/20 rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+          <div className="bg-blue-950 border border-white/20 rounded-xl w-full max-w-3xl flex flex-col">
             {/* Header */}
             <div className="flex items-center justify-between p-4 md:p-6 border-b border-white/10">
               <h2 className="text-lg md:text-xl font-semibold text-white flex items-center gap-2">
@@ -178,28 +192,24 @@ export default function PlaylistCctvPage() {
             </div>
 
             {/* Video Player - responsive aspect ratio */}
-            <div className="aspect-video bg-black/50 flex items-center justify-center flex-grow">
+            <div ref={videoPlayerRef} className="aspect-video bg-black/50 flex items-center justify-center flex-grow">
               <div className="text-center p-4">
-                <Video className="w-8 h-8 md:w-12 md:h-12 text-white/30 mx-auto mb-3" />
+                <Video className="w-8 h-8 text-white/30 mx-auto mb-3" />
                 <p className="text-white/50 font-semibold">Live stream player</p>
-                <p className="text-white/30 text-xs md:text-sm mt-2">Ready for RTMP/HLS stream integration</p>
                 <div className="mt-4 text-xs text-white/40">
-                  <p className="truncate">IP: {selectedCctv.ip_address}</p>
-                  <p>Username: {selectedCctv.username}</p>
+                  <p className="truncate">{selectedCctv.ip_address}</p>
+                  <p>{selectedCctv.username}</p>
                 </div>
               </div>
             </div>
             
             {/* Stream Controls - responsive design */}
-            <div className="p-4 md:p-6 border-t border-white/10">
-              <div className="flex flex-col sm:flex-row gap-2 md:gap-3">
-                <button className="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition text-sm md:text-base">
-                  Start Recording
-                </button>
-                <button className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition text-sm md:text-base">
-                  Take Snapshot
-                </button>
-                <button className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition text-sm md:text-base">
+            <div className="p-4 border-t border-white/10">
+              <div className="flex gap-2">
+                <button 
+                  onClick={handleFullscreen}
+                  className="flex-1 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 text-sm"
+                >
                   Full Screen
                 </button>
               </div>

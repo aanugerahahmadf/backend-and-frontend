@@ -23,9 +23,15 @@ export default function PlaylistRoomPage() {
         
         // Fetch rooms for this building
         const roomsData = await api.getRoomsByBuilding(buildingId)
-        setRooms(roomsData)
+        // Ensure roomsData is an array
+        if (Array.isArray(roomsData)) {
+          setRooms(roomsData)
+        } else {
+          setRooms([])
+        }
       } catch (error) {
-        console.error('Failed to fetch building or rooms:', error)
+        console.error('Failed to fetch building or room:', error)
+        setRooms([])
       } finally {
         setLoading(false)
       }
@@ -37,7 +43,7 @@ export default function PlaylistRoomPage() {
   }, [buildingId])
 
   const filteredRooms = rooms.filter((r) => 
-    r.name.toLowerCase().includes(searchTerm.toLowerCase())
+    r.name && r.name.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
   return (
@@ -60,7 +66,7 @@ export default function PlaylistRoomPage() {
           <Search className="absolute left-3 top-3 text-white/50" size={20} />
           <input
             type="text"
-            placeholder="Search rooms..."
+            placeholder="Search room..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-10 pr-4 py-2 md:py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl text-white placeholder-white/50 font-semibold focus:outline-none focus:border-white/40 transition"
@@ -73,13 +79,13 @@ export default function PlaylistRoomPage() {
         {loading ? (
           <div className="text-center py-12">
             <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mb-3"></div>
-            <p className="text-white/50 font-semibold">Loading rooms...</p>
+            <p className="text-white/50 font-semibold">Loading room...</p>
           </div>
         ) : filteredRooms.length === 0 ? (
           <div className="text-center py-12">
             <DoorOpen className="w-12 h-12 text-white/20 mx-auto mb-4" />
-            <p className="text-white/50 font-semibold">No rooms available</p>
-            <p className="text-white/30 text-sm mt-2">Rooms will appear once added in admin panel</p>
+            <p className="text-white/50 font-semibold">No room available</p>
+            <p className="text-white/30 text-sm mt-2">Room will appear once added in admin panel</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
@@ -91,23 +97,23 @@ export default function PlaylistRoomPage() {
                 <div className="flex items-center gap-3 mb-4">
                   <DoorOpen className="w-5 h-5 md:w-6 md:h-6 text-green-400" />
                   <h3 className="text-lg md:text-xl font-semibold text-white truncate">
-                    {room.name}
+                    {room.name || 'Unnamed Room'}
                   </h3>
                 </div>
                 
                 {/* CCTVs Section - responsive design */}
                 <div className="space-y-2 mb-4">
-                  {room.cctvs?.slice(0, 3).map((cctv: any) => (
+                  {room.cctvs && Array.isArray(room.cctvs) && room.cctvs.slice(0, 3).map((cctv: any) => (
                     <div key={cctv.id} className="flex items-center justify-between bg-black/20 rounded p-2">
                       <div className="flex items-center gap-2">
                         <Video className="w-4 h-4 text-red-400" />
-                        <span className="text-white text-sm truncate">{cctv.name}</span>
+                        <span className="text-white text-sm truncate">{cctv.name || 'Unnamed CCTV'}</span>
                       </div>
                       <button 
                         onClick={(e) => {
                           e.stopPropagation();
                           // In a real implementation, you would open a modal or navigate to live stream
-                          alert(`Live stream for ${cctv.name} would open here`)
+                          alert(`Live stream for ${cctv.name || 'Unnamed CCTV'} would open here`)
                         }}
                         className="text-xs bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded transition"
                       >
@@ -115,25 +121,25 @@ export default function PlaylistRoomPage() {
                       </button>
                     </div>
                   ))}
-                  {room.cctvs?.length > 3 && (
+                  {room.cctvs && Array.isArray(room.cctvs) && room.cctvs.length > 3 && (
                     <div className="text-xs text-white/50 text-center">
-                      +{room.cctvs.length - 3} more CCTVs
+                      +{room.cctvs.length - 3} more CCTV
                     </div>
                   )}
-                  {room.cctvs?.length === 0 && (
+                  {(!room.cctvs || !Array.isArray(room.cctvs) || room.cctvs.length === 0) && (
                     <div className="text-center py-1">
-                      <p className="text-white/50 text-sm">No CCTVs available</p>
+                      <p className="text-white/50 text-sm">No CCTV available</p>
                     </div>
                   )}
                 </div>
                 
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-white/70">
-                    {room.cctvs?.length || 0} CCTVs
+                    {room.cctvs && Array.isArray(room.cctvs) ? room.cctvs.length : 0} CCTV
                   </span>
                   <Link href={`/playlist/${buildingId}/${room.id}`}>
                     <button className="text-xs md:text-sm bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg transition">
-                      View CCTVs
+                      View CCTV
                     </button>
                   </Link>
                 </div>
