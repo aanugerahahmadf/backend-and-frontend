@@ -5,6 +5,8 @@ namespace App\Filament\Resources\Cctvs;
 use UnitEnum;
 use BackedEnum;
 use App\Models\Cctv;
+use App\Models\Building;
+use App\Models\Room;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
@@ -41,7 +43,8 @@ class CctvResource extends Resource
         return $schema
             ->components([
                 Select::make('building_id')
-                    ->relationship('building', 'name')
+                    ->label('Building')
+                    ->options(Building::pluck('name', 'id')->unique())
                     ->searchable()
                     ->preload()
                     ->native(false)
@@ -49,7 +52,8 @@ class CctvResource extends Resource
                     ->required()
                     ->live(),
                 Select::make('room_id')
-                    ->relationship('room', 'name')
+                    ->label('Room')
+                    ->options(Room::pluck('name', 'id')->unique())
                     ->searchable()
                     ->preload()
                     ->native(false)
